@@ -1,52 +1,40 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SuperBatata.Api.Entities;
+using SuperBatata.Api.Repositories.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SuperBatata.Api.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class FoodController : ControllerBase
     {
-        private List<Batata> Batatas = new List<Batata>()
+        private readonly SuperBatataDbContext _dbContext;
+
+        public FoodController()
         {
-                new Batata
-                {
-                    Id = 1,
-                    Name = "tradicional",
-                    Price = 10.00M
-                },
-                new Batata
-                {
-                    Id = 2,
-                    Name = "Crinkle",
-                    Price = 10.00M
-                },
-                new Batata
-                {
-                    Id = 3,
-                    Name = "Smile",
-                    Price = 10.00M
-                }
-        };
+            _dbContext = new SuperBatataDbContext();
+        }
 
         [HttpGet]
-        public List<Batata> Get()
+        public List<Potato> Get()
         {
-            return Batatas;
+            return _dbContext.Potato.ToList();
         }
 
         [HttpGet("{id:int}")]
-        public Batata GetById(int id)
+        public Potato GetById(int id)
         {
-            return Batatas.FirstOrDefault(batata => batata.Id == id);
+            return _dbContext.Potato.FirstOrDefault(batata => batata.Id == id);
         }
 
         [HttpPost()]
-        public void Post(Batata novaBatata)
+        public void Post(Potato novaBatata)
         {
-            Batatas.Add(novaBatata);
+            _dbContext.Potato.Add(novaBatata);
+            _dbContext.SaveChanges();
         }
     }
 }
